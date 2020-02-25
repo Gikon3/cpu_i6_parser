@@ -24,7 +24,7 @@ class MemoryMap:
     def remove_repeat_error(self, relev_list, prev_list):
         result = []
         for error in relev_list:
-            if error not in prev_list:
+            if error not in prev_list and error not in result:
                 result.append(error)
 
         return result
