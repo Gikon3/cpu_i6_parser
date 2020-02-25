@@ -17,8 +17,7 @@ class MemoryMap:
                             else int("{0:014b}{1:02b}".format(int(addr_bin[-24:-10], 2), int(addr_bin[-10:-8], 2)), 2)
                         coord_error.append([x, y])
             append_coord_error = self.remove_repeat_error(coord_error, prev_coord_error)
-            if append_coord_error:
-                coord_errors_pack.append(append_coord_error)
+            coord_errors_pack.append(append_coord_error) if append_coord_error else coord_errors_pack
             prev_coord_error = coord_error.copy()
 
         return coord_errors_pack
