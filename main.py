@@ -1,6 +1,7 @@
 import json
 import re
 
+from base_parser import BaseParser
 from alu_parser import AluParser
 from uart_parser import UartParser
 from memory_parser import MemoryParser
@@ -20,6 +21,10 @@ files_in = ["logs_input/session_216_short.log",
             "logs_input/session_84_cpu_i6_3_Xe_short.log",
             "logs_input/session_84_cpu_i6_3_Xe.log"]
 
+files_excel = ["cosrad_excel/82_2020-3-3_23i16i27.xls",
+               "cosrad_excel/83_2020-3-4_0i55i26.xls",
+               "cosrad_excel/84_2020-3-4_1i33i48.xls"]
+
 alu_dir_out = "errors_alu"
 uart_dir_out = "errors_uart"
 memory_dir_out = "errors_memory"
@@ -36,10 +41,14 @@ map_memory_coords_filename = "map_coords.log"
 #     return massive_out
 
 
+base = BaseParser()
 alu = AluParser()
 uart = UartParser()
 memory = MemoryParser()
 map = MemoryMap()
+
+base.read_table(files_excel[0])
+h = input("END")
 
 with open(number_errors_filename, 'w') as f:
     pass
