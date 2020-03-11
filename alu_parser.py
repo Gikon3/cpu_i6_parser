@@ -1,12 +1,11 @@
-class AluParser:
-    OPCODE = "F0DA4000"
-    REFERENCE = "00000801"
+from base_parser import BaseParser
 
-    def divider_str(self, massive):
-        massive_out = []
-        for line in massive:
-            massive_out.append(line[:-1].split())
-        return massive_out
+
+class AluParser(BaseParser):
+    def __init__(self):
+        BaseParser.__init__(self)
+        self.OPCODE = "F0DA4000"
+        self.REFERENCE = "00000801"
 
     def find_error(self, massive):
         data = self.divider_str(massive)
