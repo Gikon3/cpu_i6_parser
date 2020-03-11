@@ -1,27 +1,26 @@
-class MemoryParser:
-    WDT = "FFDA8000"
-    UNRESET_DEVICE = "FFDA6000"
-    TIMEOUT_SPI = "FFDAB000"
-    STM_START = "FFDAF000"
-    BUFFER_FILL = "FFDAF100"
-    MACHINE = "FFDAD000"
-    SH_START = "F0DA2000"
-    SH_UART = "F0DA3000"
-    SH_ALU = "F0DA4000"
+from base_parser import BaseParser
 
-    OPCODE0 = "F0DA1000"
-    OPCODE1 = "F0DA1001"
-    REFERENCE0 = "55555555"
-    SYMBOL0 = "5"
-    REFERENCE1 = "AAAAAAAA"
-    SYMBOL1 = "A"
-    THRESHOLD = 128
 
-    def divider_str(self, massive):
-        massive_out = []
-        for line in massive:
-            massive_out.append(line[:-1].split())
-        return massive_out
+class MemoryParser(BaseParser):
+    def __init__(self):
+        BaseParser.__init__(self)
+        self.WDT = "FFDA8000"
+        self.UNRESET_DEVICE = "FFDA6000"
+        self.TIMEOUT_SPI = "FFDAB000"
+        self.STM_START = "FFDAF000"
+        self.BUFFER_FILL = "FFDAF100"
+        self.MACHINE = "FFDAD000"
+        self.SH_START = "F0DA2000"
+        self.SH_UART = "F0DA3000"
+        self.SH_ALU = "F0DA4000"
+
+        self.OPCODE0 = "F0DA1000"
+        self.OPCODE1 = "F0DA1001"
+        self.REFERENCE0 = "55555555"
+        self.SYMBOL0 = "5"
+        self.REFERENCE1 = "AAAAAAAA"
+        self.SYMBOL1 = "A"
+        self.THRESHOLD = 128
 
     def find_error(self, massive):
         import operator
@@ -32,7 +31,6 @@ class MemoryParser:
         f_errors = False
         number_errors = 0
         count_errors = 0
-        stage = ""
         address = ""
         package_errors = []
         errors_all = 0
@@ -46,7 +44,6 @@ class MemoryParser:
 
             elif line[2] == self.OPCODE0 or line[2] == self.OPCODE1:
                 f_number_errors = True
-                # stage = line[2]
 
             elif f_number_errors is True:
                 f_number_errors = False
@@ -64,14 +61,8 @@ class MemoryParser:
                         if number_5 > 5 or number_a > 5:
                             pattern = self.REFERENCE0 if number_5 > number_a else self.REFERENCE1
                             error_xor = "{0:032b}".format(operator.xor(int(line[2], 16), int(pattern, 16)))
-                            # if stage == self.OPCODE0:
-                            # error_xor = "{0:032b}".format(operator.xor(int(line[2], 16), int(self.REFERENCE0, 16)))
-                            # else:
-                            # error_xor = "{0:032b}".format(operator.xor(int(line[2], 16), int(self.REFERENCE1, 16)))
                             package_errors.append([line[0], line[1], address, error_xor])
                             errors_all += sum([int(i) for i in error_xor])
-                            # if sum([int(i) for i in error_xor]) > 1:
-                            #     print(line[1], sum([int(i) for i in error_xor]), line[2], error_xor)
                     else:
                         address = line[2]
                     count_errors += 1
