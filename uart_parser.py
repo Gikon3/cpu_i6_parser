@@ -1,12 +1,11 @@
-class UartParser:
-    OPCODE = "F0DA3000"
-    REFERENCE = "0000005C"
+from base_parser import BaseParser
 
-    def divider_str(self, massive):
-        massive_out = []
-        for line in massive:
-            massive_out.append(line[:-1].split())
-        return massive_out
+
+class UartParser(BaseParser):
+    def __init__(self):
+        BaseParser.__init__(self)
+        self.OPCODE = "F0DA3000"
+        self.REFERENCE = "0000005C"
 
     def find_error(self, massive):
         data = self.divider_str(massive)
