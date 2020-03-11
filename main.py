@@ -6,12 +6,19 @@ from uart_parser import UartParser
 from memory_parser import MemoryParser
 from memory_map import MemoryMap
 
-files_in = ["logs_input/session_216.log",
+files_in = ["logs_input/session_216_short.log",
+            "logs_input/session_216.log",
             "logs_input/session_217.log",
             "logs_input/session_218.log",
             "logs_input/session_265.log",
             "logs_input/session_266.log",
-            "logs_input/session_267.log"]
+            "logs_input/session_267.log",
+            "logs_input/session_82_cpu_i6_1_Xe_short.log",
+            "logs_input/session_82_cpu_i6_1_Xe.log",
+            "logs_input/session_83_cpu_i6_2_Xe_short.log",
+            "logs_input/session_83_cpu_i6_2_Xe.log",
+            "logs_input/session_84_cpu_i6_3_Xe_short.log",
+            "logs_input/session_84_cpu_i6_3_Xe.log"]
 
 alu_dir_out = "errors_alu"
 uart_dir_out = "errors_uart"
