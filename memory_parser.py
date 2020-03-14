@@ -2,8 +2,8 @@ from base_parser import BaseParser
 
 
 class MemoryParser(BaseParser):
-    def __init__(self):
-        BaseParser.__init__(self)
+    def __init__(self, remove_death_time):
+        BaseParser.__init__(self, remove_death_time)
         self.WDT = "FFDA8000"
         self.UNRESET_DEVICE = "FFDA6000"
         self.TIMEOUT_SPI = "FFDAB000"
@@ -22,7 +22,7 @@ class MemoryParser(BaseParser):
         self.SYMBOL1 = "A"
         self.THRESHOLD = 128
 
-    def find_error(self, massive):
+    def find_error(self, massive, cosrad_table):
         import operator
 
         data = self.divider_str(massive)
@@ -72,4 +72,6 @@ class MemoryParser(BaseParser):
                     massive_errors.append(package_errors)
                     package_errors = []
 
-        return [errors_all, massive_errors]
+        if self.remove_death_time is True:
+            self.read_table(cosrad_table)
+        return [errors_all, self.calc_death_time(massive_errors) if self.remove_death_time is True else massive_errors]

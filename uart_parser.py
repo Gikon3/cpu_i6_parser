@@ -2,12 +2,12 @@ from base_parser import BaseParser
 
 
 class UartParser(BaseParser):
-    def __init__(self):
-        BaseParser.__init__(self)
+    def __init__(self, remove_death_time):
+        BaseParser.__init__(self, remove_death_time)
         self.OPCODE = "F0DA3000"
         self.REFERENCE = "0000005C"
 
-    def find_error(self, massive):
+    def find_error(self, massive, cosrad_table):
         data = self.divider_str(massive)
         massive_errors = []
         f_number_errors = False
@@ -27,9 +27,11 @@ class UartParser(BaseParser):
                 if count_errors < 2:
                     count_errors += 1
                     if line[2] != self.REFERENCE:
-                        massive_errors.append([line[0], line[1], line[2]])
+                        massive_errors.append([[line[0], line[1], line[2]]])
                         errors_all += 1
                 else:
                     f_errors = False
 
-        return [errors_all, massive_errors]
+        if self.remove_death_time is True:
+            self.read_table(cosrad_table)
+        return [errors_all, self.calc_death_time(massive_errors) if self.remove_death_time is True else massive_errors]

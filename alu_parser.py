@@ -2,12 +2,12 @@ from base_parser import BaseParser
 
 
 class AluParser(BaseParser):
-    def __init__(self):
-        BaseParser.__init__(self)
+    def __init__(self, remove_death_time):
+        BaseParser.__init__(self, remove_death_time)
         self.OPCODE = "F0DA4000"
         self.REFERENCE = "00000801"
 
-    def find_error(self, massive):
+    def find_error(self, massive, cosrad_table):
         data = self.divider_str(massive)
         massive_errors = []
         f_number_errors = False
@@ -25,7 +25,9 @@ class AluParser(BaseParser):
             elif f_errors is True:
                 f_errors = False
                 if line[2] != self.REFERENCE:
-                    massive_errors.append([line[0], line[1], line[2]])
+                    massive_errors.append([[line[0], line[1], line[2]]])
                     errors_all += 1
 
-        return [errors_all, massive_errors]
+        if self.remove_death_time is True:
+            self.read_table(cosrad_table)
+        return [errors_all, self.calc_death_time(massive_errors) if self.remove_death_time is True else massive_errors]
