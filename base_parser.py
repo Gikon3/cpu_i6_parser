@@ -41,29 +41,33 @@ class BaseParser:
         import datetime
         result_full = []
         counter_flux_unit = 0
-        for pack in massive_errors:
-            result_pack = []
-            for error in pack:
-                dt_error_time = "{0:s} {1:s}".format(error[0], error[1])[:-7]
-                dt_error = datetime.datetime.strptime(dt_error_time, "%d.%m.%Y %H:%M:%S")
+        try:
+            for pack in massive_errors:
+                result_pack = []
+                for error in pack:
+                    dt_error_time = "{0:s} {1:s}".format(error[0], error[1])[:-7]
+                    dt_error = datetime.datetime.strptime(dt_error_time, "%d.%m.%Y %H:%M:%S")
 
-                dt_time = "{0:s} {1:s}".format(self.table[counter_flux_unit][0], self.table[counter_flux_unit][1])[:-7]
-                dt = datetime.datetime.strptime(dt_time, "%d.%m.%Y %H:%M:%S")
-
-                if dt > dt_error:
-                    break
-
-                while dt < dt_error:
-                    # print(dt, dt_error)
-                    counter_flux_unit += 1
-                    dt_time = "{0:s} {1:s}".format(self.table[counter_flux_unit][0],
-                                                   self.table[counter_flux_unit][1])[:-7]
+                    dt_time = "{0:s} {1:s}".format(self.table[counter_flux_unit][0], self.table[counter_flux_unit][1])[:-7]
                     dt = datetime.datetime.strptime(dt_time, "%d.%m.%Y %H:%M:%S")
 
-                if self.table[counter_flux_unit][2] >= self.FLUX_THRESHOLD:
-                    result_pack.append(error)
+                    if dt > dt_error:
+                        break
 
-            if result_pack:
-                result_full.append(result_pack)
+                    while dt < dt_error:
+                        # print(dt, dt_error)
+                        counter_flux_unit += 1
+                        dt_time = "{0:s} {1:s}".format(self.table[counter_flux_unit][0],
+                                                       self.table[counter_flux_unit][1])[:-7]
+                        dt = datetime.datetime.strptime(dt_time, "%d.%m.%Y %H:%M:%S")
+
+                    if self.table[counter_flux_unit][2] >= self.FLUX_THRESHOLD:
+                        result_pack.append(error)
+
+                if result_pack:
+                    result_full.append(result_pack)
+
+        except IndexError:
+            print("... IndexError")
 
         return result_full
