@@ -9,6 +9,7 @@ from list_data_input import data
 
 remove_death_time = True
 module_list = ["ALU", "UART", "Memory"]
+total_cells_error = [1, 1, 55000 * 32]
 
 alu_dir_out = "errors_alu"
 uart_dir_out = "errors_uart"
@@ -51,16 +52,20 @@ for file, cosrad_table in data:
         json.dump(uart_errors[1], f, indent=2)
 
     memory_errors = memory.find_error(lines, cosrad_table)
-    fluence = int(memory.fluence)
+    fluence = int(memory.calc_fluence())
     del memory
     create_dir(memory_dir_out)
     with open("{0:s}/memory_{1:s}".format(memory_dir_out, file.split('/')[1]), 'w') as f:
         json.dump(memory_errors[1], f, indent=2)
 
     with open(brief_data_filename, 'a') as f:
-        brief_data_list = ["{0:s}\n".format(file)]
+        brief_data_list = ["{0:s}\n  Errors\n".format(file)]
         for module, error_number in zip(module_list, [alu_errors[0], uart_errors[0], memory_errors[0]]):
-            brief_data_list.append("  {0:<7s}: {1:d}\n".format(module, error_number))
+            brief_data_list.append("    {0:<7s}: {1:d}\n".format(module, error_number))
+        brief_data_list.append("  Cut\n".format(file))
+        for module, error_number, total_cells in zip(module_list, [alu_errors[0], uart_errors[0], memory_errors[0]],
+                                                     total_cells_error):
+            brief_data_list.append("    {0:<7s}: {1:e}\n".format(module, error_number / fluence / total_cells))
         brief_data_list.append("  Fluence: {0:d}\n\n".format(fluence))
         f.writelines(brief_data_list)
 

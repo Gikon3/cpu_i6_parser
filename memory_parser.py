@@ -63,8 +63,11 @@ class MemoryParser(BaseParser):
                             error_xor = "{0:032b}".format(operator.xor(int(line[2], 16), int(pattern, 16)))
                             package_errors.append([line[0], line[1], address, error_xor])
                             errors_all += sum([int(i) for i in error_xor])
-                    else:
+                            self.set_last_datetime(line[0], line[1])
+                    elif count_errors % 2 == 0:
                         address = line[2]
+                    else:
+                        self.remember_death_datatime(line[0], line[1])
                     count_errors += 1
 
                 if count_errors == number_errors * 2:

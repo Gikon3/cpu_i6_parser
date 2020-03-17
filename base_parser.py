@@ -1,9 +1,11 @@
 class BaseParser:
+    last_datetime: str
+
     def __init__(self, remove_death_time=False):
         self.table = []
-        self.fluence = 0.0
         self.FLUX_THRESHOLD = 1.0
         self.remove_death_time = remove_death_time
+        self.death_datetime_list = []
 
     def divider_str(self, massive):
         massive_out = []
@@ -38,12 +40,32 @@ class BaseParser:
         sheet = wb[0]
         self.table = [v[0].value for v in sheet.range('B2:B10')]
 
+    def set_last_datetime(self, date, time):
+        self.last_datetime = "{0:s} {1:s}".format(date, time[:-7])
+
+    def remember_death_datatime(self, date, time):
+        datetime = "{0:s} {1:s}".format(date, time[:-7])
+        self.death_datetime_list.append(datetime)
+
+    def calc_fluence(self):
+        import datetime
+        fluence = 0.0
+        dt_last = datetime.datetime.strptime(self.last_datetime, "%d.%m.%Y %H:%M:%S")
+        for date, time, flux in self.table:
+            datetime_now = "{0:s} {1:s}".format(date, time[:-7])
+            if datetime_now not in self.death_datetime_list and flux >= self.FLUX_THRESHOLD:
+                fluence += flux
+
+            dt = datetime.datetime.strptime(datetime_now, "%d.%m.%Y %H:%M:%S")
+            if dt >= dt_last:
+                break
+
+        return fluence
+
     def calc_death_time(self, massive_errors):
         import datetime
         result_full = []
         counter_flux_unit = 0
-        accumulate_flux = 0
-        dt_prev = None
         try:
             for pack in massive_errors:
                 result_pack = []
@@ -59,7 +81,6 @@ class BaseParser:
                         break
 
                     while dt < dt_error:
-                        # print(dt, dt_error)
                         counter_flux_unit += 1
                         dt_time = "{0:s} {1:s}".format(self.table[counter_flux_unit][0],
                                                        self.table[counter_flux_unit][1])[:-7]
@@ -68,17 +89,10 @@ class BaseParser:
                     if self.table[counter_flux_unit][2] >= self.FLUX_THRESHOLD:
                         result_pack.append(error)
 
-                        if dt != dt_prev or dt_prev is None:
-                            accumulate_flux += self.table[counter_flux_unit][2]
-
-                        dt_prev = dt
-
                 if result_pack:
                     result_full.append(result_pack)
 
         except IndexError:
             print("... IndexError")
-
-        self.fluence = accumulate_flux
 
         return result_full
