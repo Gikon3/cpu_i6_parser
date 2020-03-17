@@ -73,6 +73,7 @@ for file, cosrad_table in data_in:
         json.dump(uart_errors[1], f, indent=2)
 
     memory_errors = memory.find_error(lines, cosrad_table)
+    fluence = memory.fluence
     del memory
     create_dir(memory_dir_out)
     with open("{0:s}/memory_{1:s}".format(memory_dir_out, file.split('/')[1]), 'w') as f:
@@ -80,9 +81,10 @@ for file, cosrad_table in data_in:
 
     with open(number_errors_filename, 'a') as f:
         numbers_errors = ["{0:s}\n".format(file),
-                          "\tALU   : {0:d}\n".format(alu_errors[0]),
-                          "\tUART  : {0:d}\n".format(uart_errors[0]),
-                          "\tMemory: {0:d}\n\n".format(memory_errors[0])]
+                          "\tALU:\t\t{0:d}\n".format(alu_errors[0]),
+                          "\tUART:\t\t{0:d}\n".format(uart_errors[0]),
+                          "\tMemory:\t\t{0:d}\n".format(memory_errors[0]),
+                          "\tFluence:\t{0:f}\n\n".format(fluence)]
         f.writelines(numbers_errors)
 
     map_data = [[[a[2], a[3]] for a in pack] for pack in memory_errors[1]]
