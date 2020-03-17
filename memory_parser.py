@@ -55,7 +55,6 @@ class MemoryParser(BaseParser):
             elif f_errors is True:
                 if count_errors < number_errors * 2:
                     if line[2] != self.REFERENCE0 and line[2] != self.REFERENCE1 and count_errors % 2 == 1:
-                        error_xor = ""
                         number_5 = line[2].count(self.SYMBOL0)
                         number_a = line[2].count(self.SYMBOL1)
                         if number_5 > 5 or number_a > 5:

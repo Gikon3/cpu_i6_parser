@@ -7,7 +7,8 @@ class BaseParser:
         self.remove_death_time = remove_death_time
         self.death_datetime_list = []
 
-    def divider_str(self, massive):
+    @staticmethod
+    def divider_str(massive):
         massive_out = []
         for line in massive:
             massive_out.append(line[:-1].split())
@@ -28,17 +29,17 @@ class BaseParser:
             flux = row[2]
             self.table.append([date, time, float(flux)])
 
-    def read_xls(self, filename):
-        import xlrd
-        rb = xlrd.open_workbook(filename, formatting_info=True)
-        sheet = rb.sheet_by_index(0)
-        self.table = 0
+    # def read_xls(self, filename):
+    #     import xlrd
+    #     rb = xlrd.open_workbook(filename, formatting_info=True)
+    #     sheet = rb.sheet_by_index(0)
+    #     self.table = 0
 
-    def read_xlsx(self, filename):
-        import openpyxl
-        wb = openpyxl.load_workbook(filename=filename)
-        sheet = wb[0]
-        self.table = [v[0].value for v in sheet.range('B2:B10')]
+    # def read_xlsx(self, filename):
+    #     import openpyxl
+    #     wb = openpyxl.load_workbook(filename=filename)
+    #     sheet = wb[0]
+    #     self.table = [v[0].value for v in sheet.range('B2:B10')]
 
     def set_last_datetime(self, date, time):
         self.last_datetime = "{0:s} {1:s}".format(date, time[:-7])
