@@ -15,8 +15,8 @@ class UartParser(BaseParser):
         count_errors = 0
         errors_all = 0
         for line in data:
-            time = line[0]
-            date = line[1]
+            date = line[0]
+            time = line[1]
             fact = line[2]
             if fact == self.OPCODE:
                 f_number_errors = True
@@ -30,7 +30,7 @@ class UartParser(BaseParser):
                 if count_errors < 2:
                     count_errors += 1
                     if fact != self.REFERENCE:
-                        massive_errors.append([[time, date, fact]])
+                        massive_errors.append([[date, time, fact]])
                         errors_all += 1
                 else:
                     f_errors = False
