@@ -5,9 +5,11 @@ class MemoryMap:
         for pack in data:
             coord_error = []
             for error in pack:
-                for i, symbol in enumerate(error[1][::-1]):
+                address = error[0]
+                error_bin = error[1]
+                for i, symbol in enumerate(error_bin[::-1]):
                     if symbol == "1":
-                        addr_bin = "{0:032b}".format(int(error[0], 16))
+                        addr_bin = "{0:032b}".format(int(address, 16))
                         x = int("{0:03b}{1:05b}{2:03b}".format(
                             int(addr_bin[-5:-2], 2), i, 7 - int(addr_bin[-8:-5], 2)), 2) \
                             if i < 16 else int(

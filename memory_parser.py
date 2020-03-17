@@ -35,38 +35,41 @@ class MemoryParser(BaseParser):
         package_errors = []
         errors_all = 0
         for line in data:
-            if line[2] == self.WDT or line[2] == self.UNRESET_DEVICE or line[2] == self.TIMEOUT_SPI\
-                    or line[2] == self.SH_ALU or line[2] == self.SH_UART or line[2] == self.SH_START:
+            time = line[0]
+            date = line[1]
+            fact = line[2]
+            if fact == self.WDT or fact == self.UNRESET_DEVICE or fact == self.TIMEOUT_SPI\
+                    or fact == self.SH_ALU or fact == self.SH_UART or fact == self.SH_START:
                 f_number_errors = False
                 f_errors = False
                 number_errors = 0
                 count_errors = 0
 
-            elif line[2] == self.OPCODE0 or line[2] == self.OPCODE1:
+            elif fact == self.OPCODE0 or fact == self.OPCODE1:
                 f_number_errors = True
 
             elif f_number_errors is True:
                 f_number_errors = False
-                if int(line[2], 16) > 0:
+                if int(fact, 16) > 0:
                     f_errors = True
-                    number_errors = int(line[2], 16) if int(line[2], 16) < self.THRESHOLD else self.THRESHOLD
+                    number_errors = int(fact, 16) if int(fact, 16) < self.THRESHOLD else self.THRESHOLD
                     count_errors = 0
 
             elif f_errors is True:
                 if count_errors < number_errors * 2:
-                    if line[2] != self.REFERENCE0 and line[2] != self.REFERENCE1 and count_errors % 2 == 1:
-                        number_5 = line[2].count(self.SYMBOL0)
-                        number_a = line[2].count(self.SYMBOL1)
+                    if fact != self.REFERENCE0 and fact != self.REFERENCE1 and count_errors % 2 == 1:
+                        number_5 = fact.count(self.SYMBOL0)
+                        number_a = fact.count(self.SYMBOL1)
                         if number_5 > 5 or number_a > 5:
                             pattern = self.REFERENCE0 if number_5 > number_a else self.REFERENCE1
-                            error_xor = "{0:032b}".format(operator.xor(int(line[2], 16), int(pattern, 16)))
-                            package_errors.append([line[0], line[1], address, error_xor])
+                            error_xor = "{0:032b}".format(operator.xor(int(fact, 16), int(pattern, 16)))
+                            package_errors.append([time, date, address, error_xor])
                             errors_all += sum([int(i) for i in error_xor])
-                            self.set_last_datetime(line[0], line[1])
+                            self.set_last_datetime(time, date)
                     elif count_errors % 2 == 0:
-                        address = line[2]
+                        address = fact
                     else:
-                        self.remember_death_datatime(line[0], line[1])
+                        self.remember_death_datatime(time, date)
                     count_errors += 1
 
                 if count_errors == number_errors * 2:

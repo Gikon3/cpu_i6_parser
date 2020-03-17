@@ -22,12 +22,14 @@ class BaseParser:
         temp_table.pop(0)
 
         for row in temp_table:
-            full_date_list = row[1].split()  # row[1] in format "YYYY-MM-DD HH:MM:SS"
+            datetime_now = row[1]
+            flux = float(row[2])
+            full_date_list = datetime_now.split()  # datetime_now in format "YYYY-MM-DD HH:MM:SS"
             date_list = full_date_list[0].split('-')
             date = "{0:s}.{1:s}.{2:s}".format(date_list[2], date_list[1], date_list[0])
             time = "{0:s}.000000".format(full_date_list[1])
-            flux = row[2]
-            self.table.append([date, time, float(flux)])
+
+            self.table.append([date, time, flux])
 
     # def read_xls(self, filename):
     #     import xlrd
