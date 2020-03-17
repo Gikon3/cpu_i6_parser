@@ -1,11 +1,10 @@
 class BaseParser:
-    last_datetime: str
-
     def __init__(self, remove_death_time=False):
         self.table = []
         self.FLUX_THRESHOLD = 1.0
         self.remove_death_time = remove_death_time
         self.death_datetime_list = []
+        self.last_datetime = ""
 
     @staticmethod
     def divider_str(massive):
@@ -41,6 +40,10 @@ class BaseParser:
     def calc_fluence(self):
         import datetime
         fluence = 0.0
+
+        if not self.last_datetime:
+            return fluence
+
         dt_last = datetime.datetime.strptime(self.last_datetime, "%d.%m.%Y %H:%M:%S")
         for date, time, flux in self.table:
             datetime_now = "{0:s} {1:s}".format(date, time[:-7])
