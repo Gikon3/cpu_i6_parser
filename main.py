@@ -8,13 +8,14 @@ from memory_map import MemoryMap
 from list_data_input import data
 
 remove_death_time = True
+module_list = ["ALU", "UART", "Memory"]
 
 alu_dir_out = "errors_alu"
 uart_dir_out = "errors_uart"
 memory_dir_out = "errors_memory"
 memory_map_dir_out = "memory_map"
 wolfram_dir = "wolfram"
-number_errors_filename = "number_errors.log"
+brief_data_filename = "brief_data.log"
 map_memory_coords_filename = "map_coords.log"
 
 
@@ -24,7 +25,7 @@ def create_dir(path_dir):
         os.mkdir(path_dir)
 
 
-with open(number_errors_filename, 'w') as f:
+with open(brief_data_filename, 'w') as f:
     pass
 
 for file, cosrad_table in data:
@@ -50,19 +51,18 @@ for file, cosrad_table in data:
         json.dump(uart_errors[1], f, indent=2)
 
     memory_errors = memory.find_error(lines, cosrad_table)
-    fluence = memory.fluence
+    fluence = int(memory.fluence)
     del memory
     create_dir(memory_dir_out)
     with open("{0:s}/memory_{1:s}".format(memory_dir_out, file.split('/')[1]), 'w') as f:
         json.dump(memory_errors[1], f, indent=2)
 
-    with open(number_errors_filename, 'a') as f:
-        numbers_errors = ["{0:s}\n".format(file),
-                          "\tALU:\t\t{0:d}\n".format(alu_errors[0]),
-                          "\tUART:\t\t{0:d}\n".format(uart_errors[0]),
-                          "\tMemory:\t\t{0:d}\n".format(memory_errors[0]),
-                          "\tFluence:\t{0:f}\n\n".format(fluence)]
-        f.writelines(numbers_errors)
+    with open(brief_data_filename, 'a') as f:
+        brief_data_list = ["{0:s}\n".format(file)]
+        for module, error_number in zip(module_list, [alu_errors[0], uart_errors[0], memory_errors[0]]):
+            brief_data_list.append("  {0:<7s}: {1:d}\n".format(module, error_number))
+        brief_data_list.append("  Fluence: {0:d}\n\n".format(fluence))
+        f.writelines(brief_data_list)
 
     map_data = [[[a[2], a[3]] for a in pack] for pack in memory_errors[1]]
     map_coords = memory_map.calculate(map_data)
