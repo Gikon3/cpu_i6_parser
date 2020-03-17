@@ -14,8 +14,8 @@ class AluParser(BaseParser):
         f_errors = False
         errors_all = 0
         for line in data:
-            time = line[0]
-            date = line[1]
+            date = line[0]
+            time = line[1]
             fact = line[2]
             if fact == self.OPCODE:
                 f_number_errors = True
@@ -28,7 +28,7 @@ class AluParser(BaseParser):
             elif f_errors is True:
                 f_errors = False
                 if fact != self.REFERENCE:
-                    massive_errors.append([[time, date, fact]])
+                    massive_errors.append([[date, time, fact]])
                     errors_all += 1
 
         if self.remove_death_time is True:
