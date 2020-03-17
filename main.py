@@ -72,9 +72,11 @@ for file, cosrad_table in data:
         for module, error_number in zip(module_list, [alu_errors[0], uart_errors[0], memory_errors[0], wdt_errors[0]]):
             brief_data_list.append("    {0:<7s}: {1:d}\n".format(module, error_number))
         brief_data_list.append("  Cut\n".format(file))
-        for module, error_number, total_cells in zip(module_list, [alu_errors[0], uart_errors[0], memory_errors[0], wdt_errors[0]],
+        for module, error_number, total_cells in zip(module_list,
+                                                     [alu_errors[0], uart_errors[0], memory_errors[0], wdt_errors[0]],
                                                      total_cells_error):
-            brief_data_list.append("    {0:<7s}: {1:e}\n".format(module, error_number / fluence / total_cells))
+            calc_fluence = error_number / fluence / total_cells if fluence > 0 and total_cells > 0 else 0
+            brief_data_list.append("    {0:<7s}: {1:.2e}\n".format(module, calc_fluence))
         brief_data_list.append("  Fluence: {0:d}\n\n".format(fluence))
         f.writelines(brief_data_list)
 
