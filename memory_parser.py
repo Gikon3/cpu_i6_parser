@@ -35,8 +35,8 @@ class MemoryParser(BaseParser):
         package_errors = []
         errors_all = 0
         for line in data:
-            time = line[0]
-            date = line[1]
+            date = line[0]
+            time = line[1]
             fact = line[2]
             if fact == self.WDT or fact == self.UNRESET_DEVICE or fact == self.TIMEOUT_SPI\
                     or fact == self.SH_ALU or fact == self.SH_UART or fact == self.SH_START:
@@ -63,13 +63,13 @@ class MemoryParser(BaseParser):
                         if number_5 > 5 or number_a > 5:
                             pattern = self.REFERENCE0 if number_5 > number_a else self.REFERENCE1
                             error_xor = "{0:032b}".format(operator.xor(int(fact, 16), int(pattern, 16)))
-                            package_errors.append([time, date, address, error_xor])
+                            package_errors.append([date, time, address, error_xor])
                             errors_all += sum([int(i) for i in error_xor])
-                            self.set_last_datetime(time, date)
+                            self.set_last_datetime(date, time)
                     elif count_errors % 2 == 0:
                         address = fact
                     else:
-                        self.remember_death_datatime(time, date)
+                        self.remember_death_datatime(date, time)
                     count_errors += 1
 
                 if count_errors == number_errors * 2:
