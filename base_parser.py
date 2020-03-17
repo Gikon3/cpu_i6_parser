@@ -31,18 +31,6 @@ class BaseParser:
 
             self.table.append([date, time, flux])
 
-    # def read_xls(self, filename):
-    #     import xlrd
-    #     rb = xlrd.open_workbook(filename, formatting_info=True)
-    #     sheet = rb.sheet_by_index(0)
-    #     self.table = 0
-
-    # def read_xlsx(self, filename):
-    #     import openpyxl
-    #     wb = openpyxl.load_workbook(filename=filename)
-    #     sheet = wb[0]
-    #     self.table = [v[0].value for v in sheet.range('B2:B10')]
-
     def set_last_datetime(self, date, time):
         self.last_datetime = "{0:s} {1:s}".format(date, time[:-7])
 
