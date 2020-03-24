@@ -22,6 +22,8 @@ class MemoryParser(BaseParser):
         self.SYMBOL1 = "A"
         self.THRESHOLD = 128
 
+        self.double_errors = []
+
     def find_error(self, massive, cosrad_table):
         import operator
 
@@ -66,6 +68,8 @@ class MemoryParser(BaseParser):
                             package_errors.append([date, time, address, error_xor])
                             errors_all += sum([int(i) for i in error_xor])
                             self.set_last_datetime(date, time)
+                            if error_xor.count('1') > 1:
+                                self.double_errors.append([date, time, address, error_xor])
                     elif count_errors % 2 == 0:
                         address = fact
                     else:
@@ -80,3 +84,6 @@ class MemoryParser(BaseParser):
         if self.remove_death_time is True:
             self.read_table(cosrad_table)
         return [errors_all, self.calc_death_time(massive_errors) if self.remove_death_time is True else massive_errors]
+
+    def get_double_errors(self):
+        return self.double_errors
