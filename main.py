@@ -15,6 +15,7 @@ total_cells_error = [1, 1, 55000 * 32, 1]
 alu_dir_out = "errors_alu"
 uart_dir_out = "errors_uart"
 memory_dir_out = "errors_memory"
+double_errors_dir_out = "double_errors"
 wdt_dir_out = "errors_wdt"
 memory_map_dir_out = "memory_map"
 wolfram_dir = "wolfram"
@@ -56,10 +57,15 @@ for file, cosrad_table in data:
 
     memory_errors = memory.find_error(lines, cosrad_table)
     fluence = int(memory.calc_fluence())
-    del memory
     create_dir(memory_dir_out)
     with open("{0:s}/memory_{1:s}".format(memory_dir_out, file.split('/')[1]), 'w') as f:
         json.dump(memory_errors[1], f, indent=2)
+
+    double_errors = memory.get_double_errors()
+    create_dir(double_errors_dir_out)
+    with open("{0:s}/double_{1:s}".format(double_errors_dir_out, file.split('/')[1]), 'w') as f:
+        json.dump(double_errors, f, indent=2)
+    del memory
 
     wdt_errors = wdt.find_error(lines, cosrad_table)
     del wdt
